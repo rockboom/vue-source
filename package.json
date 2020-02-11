@@ -1,0 +1,27 @@
+{
+  "name": "vue-source",
+  "version": "1.0.0",
+  "description": "vue source code",
+  "main": "webpack.config.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rockboom/vue-source.git"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rockboom/vue-source/issues"
+  },
+  "homepage": "https://github.com/rockboom/vue-source#readme"
+}
