@@ -1,11 +1,15 @@
 import {observe} from './index';
-import {arrayMethods,observeArray} from './array'
+import {
+    arrayMethods,
+    observeArray,
+    dependArray
+} from './array'
 import Dep from './dep'
 export function defineReactive(data,key,value){ // 定义响应式的数据变化
     // vue 不支持ie8 及 ie8 以下的浏览器
 
     // 如果value 依旧是一个对象的话，需要深度观察 {msg:'hello'}
-    observe(value); // 递归观察 {} arr [1,2,3]
+    let childOb = observe(value); // 递归观察 {} arr [1,2,3]
     // 相同的属性用相同的dep
     let dep = new Dep(); // dep里可以搜集依赖，搜集的是watcher 每一个属性都增加一个dep实例
     Object.defineProperty(data,key,{
@@ -16,6 +20,10 @@ export function defineReactive(data,key,value){ // 定义响应式的数据变�
                 // 我们希望存入的watcher不能重复，如果重复会造成更新时多次渲染
                 dep.depend(); // 他想让dep中可以存 watcher，我还希望让这个watcher中也存放dep，实现一个多对多的关系
                 // dep.addSub(Dep.target);
+                if (childOb){ // **数组的依赖收集 [[1],2,3]
+                    childOb.dep.depend(); // 数组也收集了当前渲染watcher
+                    dependArray(value); // 收集儿子的依赖
+                }
             }
             console.log('get data');
             return value;
@@ -33,9 +41,16 @@ export function defineReactive(data,key,value){ // 定义响应式的数据变�
 class Observer{
     constructor(data){ // data就是定义的下vm._data
         // 将用户的数据使用defineProperty重新定义
+        this.dep = new Dep(); // 此dep专门为数组而设定
+        // 每个对象 包括数组都有一个 __ob__ 属性 返回的是当期的observer实例
+        Object.defineProperty(data,'__ob__',{
+            get:()=>this,
+
+        })
         if(Array.isArray(data)){ // 重写push splice slice等数组方法
             // 只能拦截数组的方法，数组里面的每一项 还需要去观测一下
             data.__proto__ = arrayMethods; // 让数组 通过链来查找自己编写的原型链
+            // 当调用数组的方法时 手动通知
             observeArray(data); //  观测数据中的每一项
         }else{
             this.walk(data);

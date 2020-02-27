@@ -16,6 +16,9 @@ export function initState(vm){
 export function observe(data){
     // 不是对象或者是null 就不用执行后面的逻辑
     if(typeof data != 'object' || data == null) return;
+    if(data.__ob__){  // 已经被监控过了
+        return data.__ob__;
+    }
     return new Observer(data);
 }
 function proxy(vm,source,key){ // 代理数据 vm.msg =  vm._data.msg

@@ -6,7 +6,7 @@ let vm = new Vue({
         return {
             msg:'hello',
             school:{name:'fz',age:10},
-            arr:[1,2,3,{a:1}]
+            arr:[[111],1,2,3,{a:1}]
         }
     },
     computed:{
@@ -36,7 +36,7 @@ let vm = new Vue({
 
 // 如果新增的属性 也是对象类型 我们需要对这个对象 也进行观察 observe
 // console.log(vm.arr.push({a:1}),vm.arr[3].a);
-console.log(vm.arr[3]['a'] = 100);
+console.log(vm.arr[4]['a'] = 100);
 
 // 什么样的数组会被观测到 
 
@@ -50,10 +50,19 @@ console.log(vm.arr[3]['a'] = 100);
 
 // 67: 5. 异步批量更新
 setTimeout(()=>{
-    vm.msg = 'world'; // dep = [渲染watcher]
-    vm.msg = 'one';
-    vm.msg = 'two';
-    vm.msg = 'three'; // 最终就拿vm.msg = 'three' 来更新就好了
-    vm.school.name = 'four'; // dep = [渲染watcher]
+    // vm.msg = 'world'; // dep = [渲染watcher]
+    // vm.msg = 'one';
+    // vm.msg = 'two';
+    // vm.msg = 'three'; // 最终就拿vm.msg = 'three' 来更新就好了
+    // vm.school.name = 'four'; // dep = [渲染watcher]
     // vue的特点就是批量更新，防止重复渲染
+
+    // 68: 6.数组的依赖收集更新
+    // 数组更新 更新数组中的对象属性是可以的 因为拦截了对象的get和set方法
+    // vm.arr.push(1000); // 数组的依赖收集
+    // vm.arr[4].a = 100;
+
+    // 测试二维数组
+    vm.arr[0].push(2222);
+    console.log('vm:',vm)
 }, 2000);

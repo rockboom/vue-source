@@ -22,6 +22,15 @@ export function observeArray(inserted){ // 要循环数组 依次对数组中的
         observe(inserted[i]); // 没有 对数组的索引进行监控
     }
 }
+export function dependArray(value){ // 递归收集数组中的依赖
+    for(let i = 0;  i < value.length ; i++){
+        let currentItem = value[i]; // 有可能也是一个数组 [[[[[[]]]]]]
+        currentItem.__ob__ && currentItem.__ob__.dep.depend()
+        if(Array.isArray(currentItem)){
+            dependArray(currentItem); // 不停的收集 数组中的依赖关系
+        }
+    }
+}
 methods.forEach((method)=>{
     arrayMethods[method] = function (...args){ // 函数劫持 切片编程
         let r = oldArrayProtoMethods[method].apply(this, args);
@@ -38,6 +47,8 @@ methods.forEach((method)=>{
                 break;
         }
         if(inserted) observeArray(inserted);
+        console.log('array update');
+        this.__ob__.dep.notify(); // **通知视图更新
         return r;
     }
 })
