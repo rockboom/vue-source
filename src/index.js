@@ -13,7 +13,9 @@ let vm = new Vue({
 
     },
     watch:{
-
+        msg(newValue, oldValue){
+            console.log(newValue, oldValue);
+        }
     }
 })
 
@@ -63,6 +65,10 @@ setTimeout(()=>{
     // vm.arr[4].a = 100;
 
     // 测试二维数组
-    vm.arr[0].push(2222);
-    console.log('vm:',vm)
+    // vm.arr[0].push(2222);
+    // console.log('vm:',vm)
+
+    // 69: 7. watch的实现
+    // ----- watch的使用
+    vm.msg = 'world';
 }, 2000);

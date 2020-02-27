@@ -1,5 +1,6 @@
 let id = 0; 
 import { pushTarget, popTarget } from './dep'
+import { util } from '../util';
 class Watcher{ // 每一次产生一个watcher 都要有唯一的标识
     /**
      * 
@@ -8,27 +9,36 @@ class Watcher{ // 每一次产生一个watcher 都要有唯一的标识
      * @param {*} cb 用户传入的回调函数 vm.$watch('msg',cb);
      * @param {*} opts 一些其他参数
      */
+    //          vm, msg,    (newValue,oldValue)=>{},     {user:true}
     constructor(vm,exprOrFn,cb=()=>{},opts={}){
         this.vm = vm;
         this.exprOrFn = exprOrFn;
         if(typeof this.exprOrFn === 'function'){
             this.getter = exprOrFn; // getter就是new Watcher 传入的第二个参数
+        }else{
+            this.getter = function (){ 
+                return util.getValue(vm, exprOrFn); // 如果调用此方法 会将vm上对应的表达式取出来
+            }
+        }
+        if(opts.user){ // 标识是用户自己写的watcher
+            this.user = true;
         }
         this.cb = cb;
         this.deps = [];
         this.depsId = new Set();
         this.opts = opts;
         this.id = id++;
-
-        this.get(); // 默认创建一个watcher 会调用自身的get方法
+        // 创建watcher的时候 先将表达式对应的值取出来(老值)
+        this.value = this.get(); // 默认创建一个watcher 会调用自身的get方法
     }
     get(){
         // 渲染watcher Dep.target = watcher
         // msg变化了 需要让这个watcher重新执行
         pushTarget(this); 
         // 默认创建watcher 会执行此方法
-        this.getter(); // 让这个当前传入的函数执行
+        let value = this.getter(); // 让这个当前传入的函数执行
         popTarget();
+        return value;
     }
     addDep(dep){ // 同一个watcher 不应该重复记录watcher 让dep和watcher互相记忆
         let id = dep.id; // msg 的 dep
@@ -42,7 +52,10 @@ class Watcher{ // 每一次产生一个watcher 都要有唯一的标识
         queueWatcher(this);
     }
     run(){
-        this.get();
+        let value = this.get(); // 新值
+        if(this.value !== value){
+            this.cb(value,this.value);
+        }
     }
 }
 let has = {};

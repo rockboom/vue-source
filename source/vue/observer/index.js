@@ -46,7 +46,14 @@ function initData(vm){ // 将用户传入的数据 通过defineProperty重新定
 function initComputed(){
 
 }
-
-function initWatch(){
-
+function createWatcher(vm, key, handler){
+    // 内部最终也会实现$watch方法
+    return vm.$watch(key,handler);
+}
+function initWatch(vm){
+    let watch = vm.$options.watch; // 获取用户传入的watch属性
+    for(let key in watch){ // msg(){}
+        let handler = watch[key];
+        createWatcher(vm,key,handler);
+    }
 }

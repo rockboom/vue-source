@@ -64,6 +64,12 @@ Vue.prototype.$mount = function (){
 
     // 我需要让每个数据 它更改了 需要重新传染
 }
+
+Vue.prototype.$watch = function (expr, handler){
+    // 原理 创建一个watcher
+    let vm = this;
+    new Watcher(vm, expr, handler, {user:true}); // 用户自己定义的watch
+}
 export default Vue
 
 // 1. 默认我会创建一个渲染watcher 这个渲染watcher默认会被执行
