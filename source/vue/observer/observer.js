@@ -9,6 +9,7 @@ export function defineReactive(data,key,value){ // 定义响应式的数据变�
     // 相同的属性用相同的dep
     let dep = new Dep(); // dep里可以搜集依赖，搜集的是watcher 每一个属性都增加一个dep实例
     Object.defineProperty(data,key,{
+        // ** 依赖收集
         get(){ // 只要对这个属性进行了取值操作，就会将当前的watcher 存入进去
             // debugger
             if(Dep.target){ // 这次有值用的是渲染watcher
@@ -19,6 +20,7 @@ export function defineReactive(data,key,value){ // 定义响应式的数据变�
             console.log('get data');
             return value;
         },
+        // 通知依赖更新
         set(newValue){
             console.log('set data');
             if(value == newValue) return;

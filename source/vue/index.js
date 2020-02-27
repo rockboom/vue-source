@@ -28,6 +28,7 @@ function query(el){
 }
 
 Vue.prototype._update = function(){
+    console.log('_update');
     // 用用户传入的数据去更新视图
     let vm = this;
     let el = vm.$el;

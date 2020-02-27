@@ -47,3 +47,13 @@ console.log(vm.arr[3]['a'] = 100);
 // 优点
 // [{a:1}] // 内部会对数组里面的对象进行监控
 // [].push / shift / unshift 这些方法可以监控 vm.$set 内部调用的就是数组的splice
+
+// 67: 5. 异步批量更新
+setTimeout(()=>{
+    vm.msg = 'world'; // dep = [渲染watcher]
+    vm.msg = 'one';
+    vm.msg = 'two';
+    vm.msg = 'three'; // 最终就拿vm.msg = 'three' 来更新就好了
+    vm.school.name = 'four'; // dep = [渲染watcher]
+    // vue的特点就是批量更新，防止重复渲染
+}, 2000);
